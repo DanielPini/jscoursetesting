@@ -26,3 +26,8 @@ if (isLoggedIn) {
 
 console.log("User Message:", userMessage);
 
+let isAuthenticated = true;
+
+let authenticationStatus = isAuthenticated ? "Authenticated" : "Not authenticated";
+
+console.log("Authentication Status:", authenticationStatus)
