@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weather Report</title>
+  </head>
+  <body>
+    <h1>Weather Report</h1>
+
+    <form
+      id="weatherForm"
+      onsubmit="showweatherDetails(event)">
+      <label for="city">Enter City:</label>
+      <select
+        name="city"
+        id="city">
+        <option
+          value=""
+          selected
+          disabled>
+          -----
+        </option>
+        <option value="sydney">Sydney</option>
+        <option value="berlin">Berlin</option>
+        <option value="paris">Paris</option>
+        <option value="london">London</option>
+        <option value="new_york">New York</option>
+      </select>
+      <button type="submit">Get Weather</button>
+    </form>
+
+    <div id="weatherInfo"></div>
+    <script>
+      function showweatherDetails(event) {
+        event.preventDefault();
+
+        const city = document.getElementById("city").value;
+        console.log(city);
+        const cities = {
+          sydney: { lat: -33.8678, long: 151.2073 },
+          london: { lat: 51.5072, long: -0.1276 },
+          paris: { lat: 48.853, long: 2.3488 },
+          berlin: { lat: 52.52, long: 13.405 },
+          new_york: { lat: 40.7128, long: -74.006 },
+        };
+        const apiKey = "";
+        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${cities[city].lat}&longitude=${cities[city].long}&hourly=temperature_2m`;
+        console.log(apiUrl);
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            const weatherInfo = document.getElementById("weatherInfo");
+            const hourlyArr = data.hourly;
+            weatherInfo.innerHTML = "";
+            const heading = document.createElement("h2");
+            heading.textContent =
+              "Hourly Weather Report: " + city.toUpperCase();
+            const weather = document.createElement("ul");
+            for (let i = 0; i < 12; i++) {
+              const datetime = new Date(hourlyArr.time[i]).getHours();
+              const temp = hourlyArr.temperature_2m[i];
+              const li = document.createElement("li");
+              li.innerHTML = `${datetime}:00 - ${temp}°C`;
+              weather.appendChild(li);
+            }
+            weatherInfo.appendChild(heading);
+            weatherInfo.appendChild(weather);
+          })
+          .catch((error) => {
+            console.error("Error fetching weather: ", error);
+            weatherInfo.innerHTML = `<p>Failed to fetch weather, please try again.</p>`;
+          });
+      }
+    </script>
+  </body>
+</html>
